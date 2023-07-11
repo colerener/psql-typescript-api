@@ -1,16 +1,13 @@
 import { query } from '../db/index.js';
 import { QueryResult } from 'pg';
-
-interface UserData {
-  name: string,
-  id: string
-};
+import { User } from '../models';
+import { prepareQueryFieldsFromMap } from '../utils';
 
 interface UpdateDocument {
   [key: string]: any
 };
 
-export const getAllUsers = async (): Promise<UserData[]>  => {
+export const getAllUsers = async (): Promise<User[]>  => {
   let result: QueryResult = await query('SELECT id, name FROM users', []);
   if (result.rowCount !== 0) {
     return result.rows;
@@ -27,17 +24,11 @@ export const getOneUserById = async (id: string): Promise<any> => {
 };
 
 export const updateOneUserById = async (id: string, updateDocument: UpdateDocument): Promise<boolean> => {
-  let paramCount: number = 0;
-  let paramsEntries: Array<any> = Object.entries(updateDocument);
   let params: any[] = [];
-  let queryText: string = 'UPDATE users SET ';
-  for (let i: number = 0; i < paramsEntries.length; i++) {
-    queryText += `${paramsEntries[i][0]}=$${++paramCount}`;
-    params.push(paramsEntries[i][1]);
-  }
-  queryText += ` WHERE id = $${++paramCount}`;
+  let queryString = prepareQueryFieldsFromMap(updateDocument, 'UPDATE users SET ', params);
+  queryString += ` WHERE id = $${params.length + 1}`;
   params.push(id);
-  let result: QueryResult = await query(queryText, params);
+  let result: QueryResult = await query(queryString, params);
   if (result.rowCount === 1) {
     return true;
   }

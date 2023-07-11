@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { QueryConfig, QueryResult, PoolClient } from 'pg';
-import { query, getClient } from '../db/index.js';
-import { insertNewUser } from '../services/signup.service.js';
-import { generateToken } from '../services/jwt.service.js';
-import type { NewUserData } from '../types/index.d.ts';
+import { query, getClient } from '../db';
+import { insertNewUser } from '../services/signup.service';
+import { generateToken } from '../services/jwt.service';
+import { User } from '../models';
 
 export const isEmailUnique = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
    let result: QueryResult = await query('SELECT id FROM users WHERE email = $1', [req.body.email]);
@@ -28,7 +28,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
    try {
       userCreated = await insertNewUser(req.body); 
       if (!userCreated) throw new Error();
-      let newUser: NewUserData | null;
+      let newUser: User | null;
       let result: QueryResult = await query('SELECT id, name FROM users WHERE name = $1 AND email = $2', [req.body.name, req.body.email]);
       newUser = result.rows[0] || null;
       let token: string | null = generateToken(newUser);

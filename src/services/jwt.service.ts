@@ -1,7 +1,7 @@
 import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import type { NewUserData } from '../types/index.d.ts';
 import dotenv from 'dotenv';
+import { User } from '../models';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ interface AuthenticatedRequest extends Request {
 const SECRET: Secret = process.env.JWT_SECRET;
 const EXPIRATION: string = process.env.JWT_EXPIRATION;
 
-export const generateToken = (data: UserData): string => {
+export const generateToken = (data: User): string => {
   return jwt.sign(data, SECRET, { expiresIn: EXPIRATION });
 };
 

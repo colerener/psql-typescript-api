@@ -1,7 +1,7 @@
 import { QueryResult } from 'pg';
-import { query } from '../db/index.js';
+import { query } from '../db';
 import { hashSync } from 'bcrypt';
-import type { NewUserPayload, NewUserData, UserCreationResult } from '../types/index.d.ts';
+import type { NewUserPayload } from '../types/';
 import dotenv from 'dotenv';
 
 dotenv.config();

@@ -1,8 +1,8 @@
 import {Request, Response, NextFunction } from 'express';
-import { query } from '../db/index.js';
+import { query } from '../db';
 import { QueryResult } from 'pg';
 import { compareSync } from 'bcrypt';
-import { generateToken } from './jwt.service.js';
+import { generateToken } from './jwt.service';
 
 interface LoginCredentials {
   name: string,
